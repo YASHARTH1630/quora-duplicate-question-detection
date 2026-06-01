@@ -1,3 +1,5 @@
+import os
+import requests
 import streamlit as st
 import tensorflow as tf
 import pickle
@@ -5,14 +7,26 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re
 
 # Load model
+MODEL_URL = "https://huggingface.co/YASHARTH1630/fake-news-model/resolve/main/similar.h5"
+
+MODEL_PATH = "similar.h5"
+
+if not os.path.exists(MODEL_PATH):
+    r = requests.get(MODEL_URL)
+    r.raise_for_status()
+
+    with open(MODEL_PATH, "wb") as f:
+        f.write(r.content)
 def abs_diff(x):
     return tf.abs(x[0] - x[1])
 def mul_sim(x):
     return tf.multiply(x[0], x[1])
 model = tf.keras.models.load_model(
-    "similar.h5",
-    custom_objects={"abs_diff": abs_diff,
-                    "mul_sim": mul_sim},
+    MODEL_PATH,
+    custom_objects={
+        "abs_diff": abs_diff,
+        "mul_sim": mul_sim,
+    },
 )
 
 # Load tokenizer
