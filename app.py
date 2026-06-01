@@ -7,16 +7,18 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re
 
 # Load model
-MODEL_URL = "https://huggingface.co/YASHARTH1630/fake-news-model/resolve/main/similar.h5"
+MODEL_URL = "https://huggingface.co/YASHARTH1630/fake-news-model/resolve/main/similar.h5?download=true"
 
 MODEL_PATH = "similar.h5"
-
 if not os.path.exists(MODEL_PATH):
-    r = requests.get(MODEL_URL)
-    r.raise_for_status()
+    with st.spinner("Downloading model..."):
+        response = requests.get(MODEL_URL, stream=True)
+        response.raise_for_status()
 
-    with open(MODEL_PATH, "wb") as f:
-        f.write(r.content)
+        with open(MODEL_PATH, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
 def abs_diff(x):
     return tf.abs(x[0] - x[1])
 def mul_sim(x):
