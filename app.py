@@ -62,7 +62,7 @@ if st.button("Check Similarity"):
 
     prob = model.predict([pad1, pad2], verbose=0)[0][0]
 
-    if prob > 0.5:
+    if prob > 0.38:
         st.success(f"Duplicate ({prob:.2%})")
     else:
         st.error(f"Not Duplicate ({1-prob:.2%})")
